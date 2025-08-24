@@ -18,9 +18,6 @@ RUN unzip /tmp/pb.zip -d /pb/
 # uncomment to copy the local pb_hooks dir into the image
 # COPY ./pb_hooks /pb/pb_hooks
 
-# Copy nginx configuration for dokku
-COPY nginx.conf.sigil .
-
 # start PocketBase
 ENV PORT=8090
 CMD /pb/pocketbase serve --http=0.0.0.0:${PORT}
