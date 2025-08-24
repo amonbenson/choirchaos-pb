@@ -107,7 +107,7 @@ server {
 
     # START CORS (see https://enable-cors.org/server_nginx.html)
     if ($request_method = 'OPTIONS') {
-        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Origin' 'https://www.choirchaos.com';
         add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
         #
         # Custom headers and headers various browsers *should* be OK with but aren't
@@ -122,23 +122,23 @@ server {
         return 204;
     }
     if ($request_method = 'GET') {
-        add_header 'Access-Control-Allow-Origin' 'choirchaos.com' always;
+        add_header 'Access-Control-Allow-Origin' 'https://www.choirchaos.com' always;
         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
     }
     if ($request_method = 'POST') {
-        add_header 'Access-Control-Allow-Origin' 'choirchaos.com' always;
+        add_header 'Access-Control-Allow-Origin' 'https://www.choirchaos.com' always;
         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
     }
     if ($request_method = 'PUT') {
-        add_header 'Access-Control-Allow-Origin' 'choirchaos.com' always;
+        add_header 'Access-Control-Allow-Origin' 'https://www.choirchaos.com' always;
         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
     }
     if ($request_method = 'PATCH') {
-        add_header 'Access-Control-Allow-Origin' 'choirchaos.com' always;
+        add_header 'Access-Control-Allow-Origin' 'https://www.choirchaos.com' always;
         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
     }
     if ($request_method = 'DELETE') {
-        add_header 'Access-Control-Allow-Origin' 'choirchaos.com' always;
+        add_header 'Access-Control-Allow-Origin' 'https://www.choirchaos.com' always;
         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
     }
     # END CORS
