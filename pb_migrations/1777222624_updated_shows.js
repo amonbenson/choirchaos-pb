@@ -1,0 +1,20 @@
+/// <reference path="../pb_data/types.d.ts" />
+migrate((app) => {
+  const collection = app.findCollectionByNameOrId("pbc_2810007471")
+
+  // update collection data
+  unmarshal({
+    "listRule": "// Public: visible to everyone\nvisibility = \"public\" ||\n\n// Private/Unlisted: only owner, editors, or explicitly set viewers can see it\n(\n  (\n    visibility = \"private\" ||\n    visibility = \"unlisted\"\n  ) &&\n  @request.auth.id != \"\" &&\n  (\n    owner = @request.auth.id ||\n    editors.id ?= @request.auth.id ||\n    viewers.id ?= @request.auth.id\n  )\n)"
+  }, collection)
+
+  return app.save(collection)
+}, (app) => {
+  const collection = app.findCollectionByNameOrId("pbc_2810007471")
+
+  // update collection data
+  unmarshal({
+    "listRule": "// Public: visible to everyone\nvisibility = \"public\" ||\n\n// Private: only owner, editors, or viewers can see it\n(\n  visibility = \"private\" &&\n  @request.auth.id != \"\" &&\n  (\n    @request.auth.id = owner ||\n    editors.id ?= @request.auth.id ||\n    viewers.id ?= @request.auth.id\n  )\n)"
+  }, collection)
+
+  return app.save(collection)
+})
