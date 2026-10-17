@@ -6,7 +6,9 @@ WORKDIR /app
 
 RUN apk add --no-cache \
     unzip \
-    ca-certificates
+    ca-certificates \
+    ffmpeg \
+    lame
 
 # download and unzip PocketBase
 ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip /tmp/pb.zip
