@@ -331,7 +331,8 @@ function convertMarkers(layers, timeline, oldMarkers) {
     .map((sorted) => sorted.entry.marker)
 }
 
-// Old vamps end on an exclusive [measure, beat]. Sections end on their last beat instead.
+// Old vamps end on an exclusive [measure, beat]. Sections end on their last beat instead. Every vamp
+// plays until released, so the old iteration count is dropped.
 function convertVamps(layers, timeline, oldVamps) {
   const candidates = []
   for (const old of oldVamps) {
@@ -354,10 +355,6 @@ function convertVamps(layers, timeline, oldVamps) {
       continue
     }
 
-    if (!Number.isInteger(old.iterations) || old.iterations < 0) {
-      continue
-    }
-
     candidates.push({
       from: from,
       to: to,
@@ -365,7 +362,6 @@ function convertVamps(layers, timeline, oldVamps) {
         kind: "vamp",
         from: toLocation(timeline, from.position, from.beat),
         to: toLocation(timeline, to.position, to.beat),
-        passes: old.iterations,
         out: VAMP_OUTS.indexOf(old.out) !== -1 ? old.out : "onEnd",
         vocals: VAMP_VOCALS.indexOf(old.vocals) !== -1 ? old.vocals : "all",
       },
@@ -491,14 +487,14 @@ function restoreSong(app, record) {
     .filter((marker) => marker && marker.at && byId.has(marker.at.measure))
     .map((marker) => ({ type: "marker", start: reference(marker.at), marker: marker.text }))
 
-  // Cuts and repeats did not exist before.
+  // Cuts and repeats did not exist before. Zero iterations is how the old format plays until released.
   const vamps = asArray(arrangement.sections)
     .filter((section) => section && section.kind === "vamp" && byId.has(section.from.measure) && byId.has(section.to.measure))
     .map((section) => ({
       type: "vamp",
       start: reference(section.from),
       end: endReference(section.to),
-      iterations: section.passes,
+      iterations: 0,
       out: section.out,
       vocals: section.vocals,
     }))

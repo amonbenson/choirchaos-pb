@@ -41,9 +41,9 @@ A MIDI song (`midiFile` plus the beat map `jsonFile`) has exactly the measures o
 
 - Audio songs keep their measures in the old numbering order as `m1..mn`, labelled with the old number, and play one span over all of them.
 - MIDI songs are rebuilt from their stored beat map: `N-k` labels are passes of measure `N`, the terminal bar is dropped, and the layouts move to the written measures.
-- Markers, vamps and warp markers move to measure IDs and occurrences. Vamps become `vamp` sections ending on their last beat. References that no longer resolve are dropped, and the migration logs them.
+- Markers, vamps and warp markers move to measure IDs and occurrences. Vamps become `vamp` sections ending on their last beat that play until released, whatever their old `iterations` count, and keep their `out` and `vocals` settings. References that no longer resolve are dropped, and the migration logs them.
 
-Its down migration restores the old fields, losing what they cannot express: occurrences, cuts, repeats, and the `N-k` and terminal measures of MIDI songs.
+Its down migration restores the old fields, losing what they cannot express: occurrences, cuts, repeats, and the `N-k` and terminal measures of MIDI songs. Vamps come back with `iterations: 0`, which the old format plays until released.
 
 ## Audio uploads
 
