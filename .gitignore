@@ -1,2 +1,4 @@
 /pb_data/
 .env
+/pull-pb-data.sh
+/pb_data.tmp.*/
