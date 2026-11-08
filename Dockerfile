@@ -4,6 +4,9 @@ ARG PB_VERSION=0.29.2
 
 WORKDIR /app
 
+# Dokku reads the deploy healthcheck from app.json in the image's working directory
+COPY ./app.json /app/app.json
+
 RUN apk add --no-cache \
     unzip \
     ca-certificates \

@@ -1,0 +1,15 @@
+{
+  "healthchecks": {
+    "web": [
+      {
+        "type": "startup",
+        "name": "PocketBase serves",
+        "description": "PocketBase only listens once its migrations ran, which can take minutes. The old container serves until then.",
+        "path": "/api/health",
+        "attempts": 90,
+        "wait": 10,
+        "timeout": 5
+      }
+    ]
+  }
+}
