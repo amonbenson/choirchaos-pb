@@ -47,9 +47,13 @@ Its down migration restores the old fields, losing what they cannot express: occ
 
 ## Audio uploads
 
-`pb_hooks/audio.pb.js` converts every file uploaded to `songs.audioFiles` to VBR MP3 before the record is saved. ffmpeg decodes any format it can read to WAV, then `lame` encodes it. The encoder settings live in `pb_hooks/audio.js`. Files are renamed to `.mp3` and keep their upload order. A file that cannot be decoded fails the whole request and nothing is stored.
+`pb_hooks/audio.pb.js` converts every file uploaded to `songs.audioFiles` to mono Ogg Opus (64 kbps, half-second pages) before the record is saved. ffmpeg reads any format it can decode. The encoder settings live in `pb_hooks/audio.js`. Files are renamed to `.opus` and keep their upload order. A file that cannot be decoded fails the whole request and nothing is stored.
 
-PocketBase validates the field after the conversion, so the `audio/mpeg` MIME restriction and the field's max file size apply to the converted MP3, not to the upload. Large WAV uploads are therefore only limited by the request size limits below.
+The player streams recordings by byte range instead of downloading them whole. For that, every change of `audioFiles` also rewrites `songs.audioIndex`, a JSON file with one entry per stored recording: its pre-skip, the size of its header pages, and the size and granule advance of every audio page. Removing a recording removes its entry.
+
+PocketBase validates the fields after the conversion, so the `audio/ogg` MIME restriction and the field's max file size apply to the converted file, not to the upload. Large WAV uploads are therefore only limited by the request size limits below.
+
+`1794143230_convert_songs_audio.js` converts the stored MP3s to Opus and builds every song's index. It takes a few seconds per recording, so the first start after deploying it takes minutes, during which PocketBase does not serve yet (the frontend gets HTTP 500 from its proxy) and the log shows one line per converted song. Do not stop it: a stopped run changes nothing in the database but starts over. It cannot be undone: the MP3s are deleted. The JS VM crashes in a `finally` block that reads closure variables after its `try` block returned, so the hooks never return inside `try`.
 
 Conversion runs inside the upload request, roughly 1 to 3 seconds per five-minute track, and the proxy holds the whole upload. On Dokku, raise the nginx limits once per app:
 
