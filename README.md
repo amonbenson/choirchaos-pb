@@ -53,7 +53,7 @@ The player streams recordings by byte range instead of downloading them whole. F
 
 PocketBase validates the fields after the conversion, so the `audio/ogg` MIME restriction and the field's max file size apply to the converted file, not to the upload. Large WAV uploads are therefore only limited by the request size limits below.
 
-`1794143230_convert_songs_audio.js` converts the stored MP3s to Opus and builds every song's index. It takes a few seconds per recording, so the first start after deploying it takes minutes, and it cannot be undone: the MP3s are deleted. The JS VM crashes in a `finally` block that reads closure variables after its `try` block returned, so the hooks never return inside `try`.
+`1794143230_convert_songs_audio.js` converts the stored MP3s to Opus and builds every song's index. It takes a few seconds per recording, so the first start after deploying it takes minutes, during which PocketBase does not serve yet (the frontend gets HTTP 500 from its proxy) and the log shows one line per converted song. Do not stop it: a stopped run changes nothing in the database but starts over. It cannot be undone: the MP3s are deleted. The JS VM crashes in a `finally` block that reads closure variables after its `try` block returned, so the hooks never return inside `try`.
 
 Conversion runs inside the upload request, roughly 1 to 3 seconds per five-minute track, and the proxy holds the whole upload. On Dokku, raise the nginx limits once per app:
 
