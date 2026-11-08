@@ -21,6 +21,10 @@ On first start with an empty `pb_data/`, all migrations are applied automaticall
 - `pb_hooks/` – JS hooks (committed)
 - `pb_data/` – database and uploaded files (not committed)
 
+## Deploying
+
+Pushing to `main` deploys to Dokku. `app.json` holds the deploy healthcheck: Dokku keeps the old container serving until the new one answers `/api/health`, which PocketBase only does once its migrations ran. A slow migration therefore costs no downtime, but writes wait for it, and a deploy whose migration takes longer than the healthcheck's 15 minutes fails and keeps the old container.
+
 ## Schema changes
 
 Change collections in the **local** dashboard only. PocketBase writes a migration file to `pb_migrations/`; commit it and deploy. Production applies pending migrations on startup.
